@@ -1,9 +1,11 @@
 // File: backend/routes/adminRoutes.js
 const express = require("express");
 const router = express.Router();
-const { loginUser } = require("../controllers/userController");
 
-// Ye route Admin login handle karega
+const { loginUser, inviteHR } = require("../controllers/userController");
+
 router.post("/login", loginUser);
+
+router.post("/invite-hr", inviteHR);
 
 module.exports = router;

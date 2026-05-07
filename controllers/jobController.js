@@ -69,17 +69,17 @@ const applyToJob = async (req, res) => {
 
     if (!job) return res.status(404).json({ message: 'Job not found' });
 
-    // Eligibility 1: Verification Check[cite: 6]
+    // Eligibility 1: Verification Check
     if (!user.isVerified) {
       return res.status(403).json({ message: 'Profile not verified. Please wait for TPO approval.' });
     }
 
-    // Eligibility 2: CGPA Check[cite: 6]
+    // Eligibility 2: CGPA Check
     if (user.cgpa < job.minCGPA) {
       return res.status(403).json({ message: `Eligibility Failed: Min ${job.minCGPA} CGPA required.` });
     }
 
-    // Duplicate Check[cite: 6]
+    // Duplicate Check
     const alreadyApplied = await Application.findOne({ job: job._id, student: user._id });
     if (alreadyApplied) {
       return res.status(400).json({ message: 'Already applied for this role.' });
@@ -98,30 +98,33 @@ const applyToJob = async (req, res) => {
 };
 
 /**
- * @desc    Fetch all applications (Filtered by HR company if needed)
+ * @desc    Fetch all applications (Filtered properly for Admin, HR, and Student)
  * @route   GET /api/jobs/applications
  */
 const getApplications = async (req, res) => {
   try {
     let query = {};
     
-    // 🛡️ Security: HR sirf apni company ki applications dekhe
     if (req.user.role === 'hr') {
       const myJobs = await Job.find({ companyName: req.user.companyName }).select('_id');
       const jobIds = myJobs.map(j => j._id);
       query = { job: { $in: jobIds } };
+    } else if (req.user.role === 'admin') {
+      query = {};
+    } else {
+      query = { student: req.user._id };
     }
 
     const applications = await Application.find(query)
       .populate('student', 'fullName email cgpa enrollmentNo resume') 
       .populate('job', 'companyName role salary')
       .sort({ createdAt: -1 });
+      
     res.json(applications);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 /**
  * @desc    Update student application status
  * @route   PUT /api/jobs/status/:id
