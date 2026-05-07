@@ -236,7 +236,7 @@ const inviteHR = async (req, res) => {
     });
 
     const safeCompanyName = encodeURIComponent(companyName);
-    const inviteLink = `http://localhost:5173/?role=hr&company=${safeCompanyName}`;
+    const inviteLink = `https://davv-portal.vercel.app/?role=hr&company=${safeCompanyName}`;
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
