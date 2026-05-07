@@ -19,9 +19,9 @@ const registerUser = async (req, res) => {
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: "User already exists" });
 
-    if (role === "admin") {
-      return res.status(403).json({ message: "Admin accounts must be created manually in the database." });
-    }
+    // if (role === "admin") {
+    //   return res.status(403).json({ message: "Admin accounts must be created manually in the database." });
+    // }
 
     if (role === "hr" && !companyName) {
       return res.status(403).json({ message: "HR registration requires a valid invitation from TPO." });
