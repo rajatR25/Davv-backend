@@ -6,6 +6,7 @@ const path = require('path');
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const jobRoutes = require("./routes/jobRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 connectDB(); 
 
@@ -15,6 +16,7 @@ app.use(express.json());
 
 app.use("/api/users", userRoutes);
 app.use("/api/jobs", jobRoutes);
+app.use("/api/admin", adminRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const PORT = process.env.PORT || 5000;
